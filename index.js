@@ -7,9 +7,14 @@ const config = {
     "postgres://candidate:62I8anq3cFq5GYh2u4Lh@rc1b-r21uoagjy1t7k77h.mdb.yandexcloud.net:6432/db1",
   ssl: {
     rejectUnauthorized: true,
-    ca: fs.readFileSync("/root.crt").toString(),
+    ca: fs.readFileSync("./root.crt").toString(),
   },
 };
+
+//сертификат устаревает и требуется обновлять
+// на макос в terminal: curl https://storage.yandexcloud.net/cloud-certs/CA.pem -o root.crt
+// на линукс и вин: wget "https://storage.yandexcloud.net/cloud-certs/CA.pem"     --output-document ./root.crt && chmod 0600 ./root.crt
+
 
 // проверка на локальной машине
 // const config = {
@@ -17,11 +22,12 @@ const config = {
 //     "postgres://postgres:1111@localhost:5432/nikita23t",
 // };
 
+
 const pool = new Pool(config);
 
 const createTableQuery = `CREATE TABLE IF NOT EXISTS nikita23t (id SERIAL PRIMARY KEY, name TEXT, data JSONB)`;
 
-//это для проверки создания бд на облаке
+//это для проверки, создается ли бд на облаке
 //const createTableQuery = `DROP TABLE nikita23t`;
 
 //функция создания и проверки наличия таблицы в бд
@@ -29,13 +35,13 @@ async function createTable() {
   try {
     await pool.query(createTableQuery);
   } catch (error) {
-    console.error('Error creating table', error);
+    console.error("Error creating table", error);
   }
 }
 
 //функция изъятия данных из апи и помещания в бд
 async function insertData() {
-  const response = await fetch('https://rickandmortyapi.com/api/character');
+  const response = await fetch("https://rickandmortyapi.com/api/character");
   const jsonResponse = await response.json();
   const results = jsonResponse.results;
 
@@ -48,7 +54,7 @@ async function insertData() {
       const values = [name, data];
       await pool.query(query, values);
     } catch (error) {
-      console.error('Error executing query', error);
+      console.error("Error executing query", error);
     }
   }
 }
@@ -56,11 +62,11 @@ async function insertData() {
 //функция отображения данных из бд в консоль для проверки
 async function getDataFromTable() {
   try {
-    const query = 'SELECT * FROM nikita23t';
+    const query = "SELECT * FROM nikita23t";
     const { rows } = await pool.query(query);
     console.table(rows);
   } catch (error) {
-    console.error('Error executing query', error);
+    console.error("Error executing query", error);
   }
 }
 
