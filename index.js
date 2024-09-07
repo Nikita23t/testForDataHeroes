@@ -2,25 +2,11 @@
 const { Pool } = require("pg");
 const fs = require("fs");
 
-const config = {
-  connectionString:
-    "postgres://candidate:62I8anq3cFq5GYh2u4Lh@rc1b-r21uoagjy1t7k77h.mdb.yandexcloud.net:6432/db1",
-  ssl: {
-    rejectUnauthorized: true,
-    ca: fs.readFileSync("./root.crt").toString(),
-  },
-};
 
-//сертификат устаревает и требуется обновлять
-// на макос в terminal: curl https://storage.yandexcloud.net/cloud-certs/CA.pem -o root.crt
-// на линукс и вин: wget "https://storage.yandexcloud.net/cloud-certs/CA.pem"     --output-document ./root.crt && chmod 0600 ./root.crt
-
-
-// проверка на локальной машине
-// const config = {
-//   connectionString:
-//     "postgres://postgres:1111@localhost:5432/nikita23t",
-// };
+ const config = {
+   connectionString:
+     "postgres://postgres:1111@localhost:5432/nikita23t", //postgres://DBNAME:PASSWORD@HOST:PORT/TABLENAME
+ };
 
 
 const pool = new Pool(config);
